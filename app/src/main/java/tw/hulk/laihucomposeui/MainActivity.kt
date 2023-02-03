@@ -8,10 +8,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -20,9 +24,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.launch
 import tw.hulk.laihucomposeui.ui.SearchBar
+import tw.hulk.laihucomposeui.ui.approval.ApprovalScreen
+import tw.hulk.laihucomposeui.ui.bottomnav.BottomNavItem
+import tw.hulk.laihucomposeui.ui.compost.CompostScreen
+import tw.hulk.laihucomposeui.ui.home.HomeScreen
+import tw.hulk.laihucomposeui.ui.network.NetworkScreen
+import tw.hulk.laihucomposeui.ui.notification.NotificationScreen
 import tw.hulk.laihucomposeui.ui.theme.Beige3
 import tw.hulk.laihucomposeui.ui.theme.LaiHuComposeUITheme
 
@@ -33,15 +49,18 @@ class MainActivity : ComponentActivity() {
             LaiHuComposeUITheme {
                 val navController = rememberNavController()
                 val scaffoldState = rememberScaffoldState()
+                val scope = rememberCoroutineScope()
                 Scaffold(
                     scaffoldState = scaffoldState,
+                    backgroundColor = Color.White,
                     topBar = {
                         TopAppBar(
                             backgroundColor = Color.White,
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.fillMaxHeight()
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -92,7 +111,9 @@ class MainActivity : ComponentActivity() {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.padding(end = 12.dp).clickable {  }
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clickable { }
                                 ) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_headphone),
@@ -104,10 +125,21 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                    },
+                    bottomBar = {
+                        BottomNavigation(navController = navController) {
+                            scope.launch {
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    "$it is clicked!",
+                                    actionLabel = "action",
+                                    SnackbarDuration.Short
+                                )
+                            }
+                        }
                     }
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-//                        NavigationGraph(navController = navController)
+                        NavigationGraph(navController = navController)
                     }
                 }
             }
@@ -115,4 +147,69 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun BottomNavigation(navController: NavController, onNavClick: (String) -> Unit) {
+    val items = listOf(
+        BottomNavItem.Home,
+        BottomNavItem.MyNetwork,
+        BottomNavItem.Compost,
+        BottomNavItem.Notification,
+        BottomNavItem.Approval
+    )
+    BottomNavigation(
+        backgroundColor = Color.White
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+        items.forEach { item ->
+            BottomNavigationItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title
+                    )
+                },
+                label = { Text(text = item.title, fontSize = 9.sp, color = Color.Black) },
+                selectedContentColor = Color.Black,
+                unselectedContentColor = Color.Black.copy(0.4f),
+                alwaysShowLabel = true,
+                selected = currentRoute == item.screen_route,
+                onClick = {
+                    onNavClick(item.screen_route)
+                    navController.navigate(item.screen_route) {
+                        navController.graph.startDestinationRoute?.let { screen_route ->
+                            popUpTo(screen_route) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun NavigationGraph(navController: NavHostController) {
+    val context = LocalContext.current
+    NavHost(navController = navController, startDestination = BottomNavItem.Home.screen_route) {
+        composable(BottomNavItem.Home.screen_route) {
+            HomeScreen()
+        }
+        composable(BottomNavItem.MyNetwork.screen_route) {
+            NetworkScreen()
+        }
+        composable(BottomNavItem.Compost.screen_route) {
+            CompostScreen()
+        }
+        composable(BottomNavItem.Notification.screen_route) {
+            NotificationScreen()
+        }
+        composable(BottomNavItem.Approval.screen_route) {
+            ApprovalScreen()
+        }
+    }
+}
 
