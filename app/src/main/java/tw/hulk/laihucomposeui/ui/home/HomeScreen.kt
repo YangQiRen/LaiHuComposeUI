@@ -24,17 +24,17 @@ import tw.hulk.laihucomposeui.ui.theme.Orange
 fun HomeScreen() {
     val tabRowItems = listOf(
         TabRowItem(
-            title = "Tab 1",
+            title = "關注",
             screen = { TabScreen(text = "Tab 1") },
             iconId = R.drawable.ic_approval_24,
         ),
         TabRowItem(
-            title = "Tab 2",
+            title = "推薦",
             screen = { TabScreen(text = "Tab 2") },
             iconId = R.drawable.ic_compost_24,
         ),
         TabRowItem(
-            title = "Tab 3",
+            title = "資訊",
             screen = { TabScreen(text = "Tab 3") },
             iconId = R.drawable.ic_notifications_active_24,
         )
@@ -81,25 +81,7 @@ fun Tabs(pagerState: PagerState, tabRowItems: List<TabRowItem>) {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
-@Preview(showBackground = true)
 @Composable
-fun TabsPreview() {
-    Tabs(pagerState = rememberPagerState(), tabRowItems = listOf(
-        TabRowItem(
-            title = "Tab 1",
-            screen = { TabScreen(text = "Tab 1") },
-            iconId = R.drawable.ic_approval_24,
-        ),
-        TabRowItem(
-            title = "Tab 2",
-            screen = { TabScreen(text = "Tab 2") },
-            iconId = R.drawable.ic_compost_24,
-        ),
-        TabRowItem(
-            title = "Tab 3",
-            screen = { TabScreen(text = "Tab 3") },
-            iconId = R.drawable.ic_notifications_active_24,
-        )
-    ))
+fun FollowScreen() {
+    
 }
