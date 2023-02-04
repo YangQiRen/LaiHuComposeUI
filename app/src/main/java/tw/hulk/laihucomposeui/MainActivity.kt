@@ -41,6 +41,7 @@ import tw.hulk.laihucomposeui.ui.network.NetworkScreen
 import tw.hulk.laihucomposeui.ui.notification.NotificationScreen
 import tw.hulk.laihucomposeui.ui.theme.Beige3
 import tw.hulk.laihucomposeui.ui.theme.LaiHuComposeUITheme
+import tw.hulk.laihucomposeui.ui.theme.Orange
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,23 +119,24 @@ class MainActivity : ComponentActivity() {
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_headphone),
                                         contentDescription = "Service",
-                                        tint = Color(0xFFFF6400),
+                                        tint = Orange,
                                         modifier = Modifier.size(24.dp)
                                     )
-                                    Text(text = "客服", fontSize = 14.sp, color = Color(0xFFFF6400))
+                                    Text(text = "客服", fontSize = 14.sp, color = Orange)
                                 }
                             }
                         }
                     },
                     bottomBar = {
                         BottomNavigation(navController = navController) {
-                            scope.launch {
-                                scaffoldState.snackbarHostState.showSnackbar(
-                                    "$it is clicked!",
-                                    actionLabel = "action",
-                                    SnackbarDuration.Short
-                                )
-                            }
+                            // 測試顯示snackbar是否會被遮擋
+//                            scope.launch {
+//                                scaffoldState.snackbarHostState.showSnackbar(
+//                                    "$it is clicked!",
+//                                    actionLabel = "action",
+//                                    SnackbarDuration.Short
+//                                )
+//                            }
                         }
                     }
                 ) { innerPadding ->
@@ -169,9 +171,15 @@ fun BottomNavigation(navController: NavController, onNavClick: (String) -> Unit)
                         contentDescription = item.title
                     )
                 },
-                label = { Text(text = item.title, fontSize = 9.sp, color = Color.Black) },
-                selectedContentColor = Color.Black,
-                unselectedContentColor = Color.Black.copy(0.4f),
+                label = {
+                    Text(
+                        text = item.title,
+                        fontSize = 9.sp,
+                        color = if (currentRoute == item.screen_route) Orange else Color.Black
+                    )
+                },
+                selectedContentColor = Orange,
+                unselectedContentColor = Color.Black,
                 alwaysShowLabel = true,
                 selected = currentRoute == item.screen_route,
                 onClick = {
