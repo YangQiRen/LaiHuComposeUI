@@ -1,13 +1,20 @@
 package tw.hulk.laihucomposeui.ui.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,9 +22,16 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import tw.hulk.laihucomposeui.R
+import tw.hulk.laihucomposeui.model.LayoutItem
+import tw.hulk.laihucomposeui.model.LayoutType
+import tw.hulk.laihucomposeui.model.Video
+import tw.hulk.laihucomposeui.model.getDummyData
+import tw.hulk.laihucomposeui.ui.TitleBar
+import tw.hulk.laihucomposeui.ui.VideoSection
 import tw.hulk.laihucomposeui.ui.tabs.TabRowItem
 import tw.hulk.laihucomposeui.ui.tabs.TabScreen
 import tw.hulk.laihucomposeui.ui.theme.Orange
+import tw.hulk.laihucomposeui.ui.theme.Typography
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -25,7 +39,7 @@ fun HomeScreen() {
     val tabRowItems = listOf(
         TabRowItem(
             title = "關注",
-            screen = { TabScreen(text = "Tab 1") },
+            screen = { FollowScreen() },
             iconId = R.drawable.ic_approval_24,
         ),
         TabRowItem(
@@ -83,5 +97,58 @@ fun Tabs(pagerState: PagerState, tabRowItems: List<TabRowItem>) {
 
 @Composable
 fun FollowScreen() {
-    
+    val state = rememberScrollState()
+    val dataList = getDummyData()
+
+    Column(
+//        state = state,
+        modifier = Modifier.fillMaxSize().verticalScroll(state = state)
+    ) {
+        dataList.forEachIndexed { index, layoutItem ->
+            when (layoutItem) {
+                is LayoutItem.HeaderItem -> {
+                    TitleBar(headerItem = layoutItem)
+                }
+                is LayoutItem.VideoItem -> {
+                    VideoSection(videoItem = layoutItem)
+                }
+            }
+        }
+//        items(dataList) { layoutItem ->
+//            when (layoutItem) {
+//                is LayoutItem.HeaderItem -> {
+//                    TitleBar(headerItem = layoutItem)
+//                }
+//                is LayoutItem.VideoItem -> {
+//                    VideoSection(videoItem = layoutItem)
+//                }
+//            }
+//        }
+    }
+
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        VideoSection(
+//            videoItem = LayoutItem.VideoItem(
+//                videoList = listOf(
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video(),
+//                    Video()
+//                ),
+//                type = LayoutType.Horizontal
+//            )
+//        )
+//    }
 }

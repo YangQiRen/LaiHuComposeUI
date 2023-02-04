@@ -9,18 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tw.hulk.laihucomposeui.R
+import tw.hulk.laihucomposeui.model.LayoutItem
 import tw.hulk.laihucomposeui.ui.theme.Orange
 import tw.hulk.laihucomposeui.ui.theme.Typography
 
 @Composable
 fun TitleBar(
     modifier: Modifier = Modifier,
-    titleText: String,
-    actionText: String? = null,
+    headerItem: LayoutItem.HeaderItem,
     onActionClick: (() -> Unit)? = null,
 ) {
     Row(
@@ -39,17 +40,23 @@ fun TitleBar(
         )
 
         Text(
-            text = titleText,
+            text = headerItem.title,
             style = Typography.h1,
             modifier = Modifier
                 .weight(1f),
             fontSize = 20.sp
         )
-        if (!actionText.isNullOrEmpty()) {
+        if (!headerItem.actionText.isNullOrEmpty()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable { onActionClick?.invoke() }) {
-                Text(text = actionText, style = Typography.body1, color = Orange)
+                Text(
+                    text = headerItem.actionText,
+                    textAlign = TextAlign.Center,
+                    style = Typography.body1,
+                    color = Orange,
+                    fontSize = 14.sp
+                )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_forward),
                     contentDescription = "Forward",
@@ -65,8 +72,7 @@ fun TitleBar(
 @Composable
 fun TitleBarPreview() {
     TitleBar(
-        titleText = "即時賽程",
-        actionText = "更多",
+        headerItem = LayoutItem.HeaderItem("Title", "action"),
         onActionClick = {
 
         })
